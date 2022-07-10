@@ -57,25 +57,18 @@ class Favorite(Base):
     __tablename__ = 'favorite'
     # Here we define columns for the table address.
     # Notice that each column is also a normal Python instance attribute.
-    id = Column(Integer, primary_key=True)
-    name = Column(String(50), nullable=False)
+    id_item = Column(Integer, primary_key=True)
+    name_item = Column(String(50), nullable=False)
+    id_user = Column(Integer, ForeignKey('user.id'))
 
 class Relational_favorite_user(Base):
     __tablename__ = 'address'
     # Here we define columns for the table address.
     # Notice that each column is also a normal Python instance attribute.
-    id_user = Column(Integer, primary_key=True)
+    id_item = Column(Integer, primary_key=True)
+    id_user = Column(Integer, ForeignKey('user.id'))
     name_user = Column(String(50), nullable=False)
-    id_character = Column(Integer, nullable=False)
-    name_character = Column(String(50), nullable=False)
-    id_planet = Column(Integer, nullable=False)
-    name_planet = Column(String(50), nullable=False)
-    id_vehicle = Column(Integer, nullable=False)
-    name_vehicle = Column(String(50), nullable=False)
     url = Column(String(50), nullable=False, unique=True)
-
-
-  
 
     def to_dict(self):
         return {}
