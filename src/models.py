@@ -14,7 +14,9 @@ class Person(Base):
     # Notice that each column is also a normal Python instance attribute.
     id = Column(Integer, primary_key=True)
     name = Column(String(250), nullable=False)
-    favorites = relationship("Favorite", back_populates="person")
+    character_favorite = relationship("Character_Favorite", back_populates="person")
+    vehicles_favorite = relationship("Vehicles_Favorite", back_populates="person")
+    planets_favorite = relationship("Planets_Favorite", back_populates="person")
 
 class Character(Base):
     __tablename__ = 'character'
@@ -23,8 +25,10 @@ class Character(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(250))
     url = Column(String(250))
-    favorite_id = Column(Integer, ForeignKey("favorite.id"))
-    favorite = relationship("Favorite", back_populates="character")
+    character_favorite_id = Column(Integer, ForeignKey("character_favorite.id"))
+    character_favorite = relationship("Character_Favorite", back_populates="character")
+    
+    
     
 
 class Vehicles(Base):
@@ -34,8 +38,10 @@ class Vehicles(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(250))
     url = Column(String(250))
-    favorite_id = Column(Integer, ForeignKey("favorite.id"))
-    favorite = relationship("Favorite", back_populates="vehicles")
+
+    vehicles_favorite_id = Column(Integer, ForeignKey("vehicles_favorite.id"))
+    vechicles_favorite = relationship("Vehicles_Favorite", back_populates="vehicles")
+  
 
 class Planets(Base):
     __tablename__ = 'planets'
@@ -44,11 +50,14 @@ class Planets(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(250))
     url = Column(String(250))
-    favorite_id = Column(Integer, ForeignKey("favorite.id"))
-    favorite = relationship("Favorite", back_populates="planets")
 
-class Favorite(Base):
-    __tablename__ = 'favorite'
+    planets_favorite_id = Column(Integer, ForeignKey("planets_favorite.id"))
+    planets_favorite = relationship("Planet_Favorite", back_populates="planets")
+
+
+class Character_Favorite(Base):
+    __tablename__ = 'character_favorite'
+    id = Column(Integer, primary_key=True)
     #relacion person y favorite
     person_id = Column(Integer, ForeignKey('person.id'))
     person = relationship(Person)
@@ -57,21 +66,47 @@ class Favorite(Base):
     character_id = Column(Integer, ForeignKey('character.id'))
     character = relationship(Character)
     character_name = Column(String(50))
+
+    person_id = Column(Integer, ForeignKey("person.id", back_populates="character_favorite"))
+
+    character = relationship("Character")
+
+class Vehicles_Favorite(Base):
+    __tablename__ = 'vehicles_favorite'
+    id = Column(Integer, primary_key=True)
+    #relacion person y favorite
+    person_id = Column(Integer, ForeignKey('person.id'))
+    person = relationship(Person)
+    person_name = Column(String(50))
     #relacion vehicles y favorite
     vehicle_id = Column(Integer, ForeignKey('vechicles.id'))
     vehicle = relationship(Vehicles)
     vehicle_name = Column(String(50))
+
+    person_id = Column(Integer, ForeignKey("person.id", back_populates="vehicles_favorite"))
+
+    vehicles = relationship("Vehicles")
+
+
+
+class Planets_Favorite(Base):
+    __tablename__ = 'planets_favorite'
+    id = Column(Integer, primary_key=True)
+    #relacion person y favorite
+    person_id = Column(Integer, ForeignKey('person.id'))
+    person = relationship(Person)
+    person_name = Column(String(50))
     #relacion planets y favorite
     planet_id = Column(Integer, ForeignKey('planets.id'))
     planet = relationship(Planets)
     planet_name = Column(String(50))
-    #relacion uno a muchos person y favorite, donde favorite sería hijo
+
     person_id = Column(Integer, ForeignKey("person.id"))
-    person = relationship("Person", back_populates="favorite")
-    #relacion uno a muchos character, planet, vehicle y favorite donde sería padre
-    favorite_character = relationship("Character", back_populates="favorite")
-    favorite_planet = relationship("Planets", back_populates="favorite")
-    favorite_vehicle = relationship("Vehicles", back_populates="favorite")
+
+    planets = relationship("Planets", back_populates="planets_favorite")
+
+    
+    
 
     def to_dict(self):
         return {}
