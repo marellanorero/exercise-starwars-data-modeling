@@ -19,7 +19,6 @@ class Person(Base):
 
 class Character_Favorite(Base):
     __tablename__ = 'character_favorite'
-    id = Column(Integer, primary_key=True)
     #relacion person y favorite -- Muchos a muchos ... muchos usuarios pueden tener muchos favoritos
     person_id= Column(Integer, ForeignKey('person.id'), primary_key=True)
     character_id = Column(Integer, ForeignKey('character.id'), primary_key=True)
@@ -44,7 +43,6 @@ class Planets(Base):
 
 class Planets_Favorite(Base):
     __tablename__ = 'planets_favorite'
-    id = Column(Integer, primary_key=True)
     #relacion person y favorite -- Muchos a muchos ... muchos usuarios pueden tener muchos favoritos
     person_id= Column(Integer, ForeignKey('person.id'), primary_key=True)
     planet_id = Column(Integer, ForeignKey('planets.id'), primary_key=True)
