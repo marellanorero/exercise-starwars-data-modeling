@@ -17,11 +17,6 @@ class Person(Base):
     character_favorite = relationship("Character_Favorite", secondary="character_favorite")
     planets_favorite = relationship("Planets_Favorite", secondary="planets_favorite")
 
-class Character_Favorite(Base):
-    __tablename__ = 'character_favorite'
-    #relacion person y favorite -- Muchos a muchos ... muchos usuarios pueden tener muchos favoritos
-    person_id= Column(Integer, ForeignKey('person.id'), primary_key=True)
-    character_id = Column(Integer, ForeignKey('character.id'), primary_key=True)
     
 class Character(Base):
     __tablename__ = 'character'
@@ -40,6 +35,12 @@ class Planets(Base):
     name = Column(String(250))
     url = Column(String(250))
     person = relationship("Person", secondary="planets_favorite")
+
+class Character_Favorite(Base):
+    __tablename__ = 'character_favorite'
+    #relacion person y favorite -- Muchos a muchos ... muchos usuarios pueden tener muchos favoritos
+    person_id= Column(Integer, ForeignKey('person.id'), primary_key=True)
+    character_id = Column(Integer, ForeignKey('character.id'), primary_key=True)
 
 class Planets_Favorite(Base):
     __tablename__ = 'planets_favorite'
