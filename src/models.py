@@ -1,54 +1,78 @@
 import os
 import sys
-from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy import Column, ForeignKey, Integer, String,Table
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 from sqlalchemy import create_engine
 from eralchemy import render_er
 
 Base = declarative_base()
 
-class Person(Base):
-    __tablename__ = 'person'
-    # Here we define columns for the table person
-    # Notice that each column is also a normal Python instance attribute.
-    id = Column(Integer, primary_key=True)
-    name = Column(String(250), nullable=False)
-    character_favorite = relationship("Character_Favorite", secondary="character_favorite")
-    planets_favorite = relationship("Planets_Favorite", secondary="planets_favorite")
+people_user = Table(
+    'people_user',
+    Base.metadata,
+    Column('people_id', ForeignKey('people.id')),
+    Column('users_id', ForeignKey('users.id'))
+)
+ 
+planets_user = Table(
+    'planets_user',
+    Base.metadata,
+    Column('planets_id', ForeignKey('planets.id'), primary_key=True),
+    Column('users_id', ForeignKey('users.id'), primary_key=True)
+)
 
-    
-class Character(Base):
-    __tablename__ = 'character'
+vehicles_user = Table(
+    'vehicles_user',
+    Base.metadata,
+    Column('vehicles_id', ForeignKey('vehicles.id'), primary_key=True),
+    Column('users_id', ForeignKey('users.id'), primary_key=True)
+)
+
+
+
+class User(Base):
+    __tablename__='users'
+    id = Column(Integer, primary_key=True)
+    unsername = Column(String(50), unique=True, nullable=False)
+    email = Column(String(120), unique=True, nullable=False)
+    password = Column(String(80), unique=False, nullable=False)
+    people_user = relationship('Person', secondary="people_user", backref='users') # JOIN SQL MANY TO MANY
+    planets_user = relationship('Planet', secondary="planets_user", backref='users') # JOIN SQL MANY TO MANY
+    vehicles_user = relationship('Vehicle', secondary="vehicles_user", backref='users') # JOIN SQL MANY TO MANY
+
+class Vehicle(Base):
+    __tablename__ = 'vehicles'
     # Here we define columns for the table address.
     # Notice that each column is also a normal Python instance attribute.
     id = Column(Integer, primary_key=True)
-    name = Column(String(250))
-    url = Column(String(250))
-    person = relationship("Person", secondary="character_favorite")
-      
-class Planets(Base):
+    name = Column(String(250), nullable=False)
+    url = Column(String(250), nullable=False)
+    #users = db.relationship("User", secondary="character_favorite")
+
+
+class Person(Base):
+    __tablename__ = 'people'
+    # Here we define columns for the table address.
+    # Notice that each column is also a normal Python instance attribute.
+    id = Column(Integer, primary_key=True)
+    name = Column(String(250), nullable=False)
+    url = Column(String(250), nullable=False)
+    #users = db.relationship("User", secondary="character_favorite")
+    #users = db.relationship('User', cascade="all, delete", secondary="characters_favorites")
+
+
+class Planet(Base):
     __tablename__ = 'planets'
     # Here we define columns for the table address.
     # Notice that each column is also a normal Python instance attribute.
     id = Column(Integer, primary_key=True)
-    name = Column(String(250))
-    url = Column(String(250))
-    person = relationship("Person", secondary="planets_favorite")
+    name = Column(String(250), nullable=False)
+    url = Column(String(250), nullable=False)
+    #users = db.relationship("User", secondary="character_favorite")
 
-class Character_Favorite(Base):
-    __tablename__ = 'character_favorite'
-    #relacion person y favorite -- Muchos a muchos ... muchos usuarios pueden tener muchos favoritos
-    person_id= Column(Integer, ForeignKey('person.id'), primary_key=True)
-    character_id = Column(Integer, ForeignKey('character.id'), primary_key=True)
 
-class Planets_Favorite(Base):
-    __tablename__ = 'planets_favorite'
-    #relacion person y favorite -- Muchos a muchos ... muchos usuarios pueden tener muchos favoritos
-    person_id= Column(Integer, ForeignKey('person.id'), primary_key=True)
-    planet_id = Column(Integer, ForeignKey('planets.id'), primary_key=True)
 
-    
 
     def to_dict(self):
         return {}
